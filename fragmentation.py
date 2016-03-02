@@ -24,7 +24,11 @@ murcko returns only one fragment: {fragment_name_1: (counter_fragment_1)}
 
 def frag_rings(mol):
     output = dict()
-    rings = [[ring.clone().canonicalSmiles().split(" ")[0], set([atom.index() for atom in ring.iterateAtoms()])] for ring in mol.iterateRings(1, mol.countAtoms())]
+    rings = []
+    for ring in mol.iterateRings(1, mol.countAtoms()):
+        atom_ids = [atom.index() for atom in ring.iterateAtoms()]
+        smi = mol.createSubmolecule(atom_ids).canonicalSmiles().split(" ")[0]
+        rings.append([smi, set(atom_ids)])
     rings = sorted(rings, key=lambda x: len(x[1]), reverse=True)
     for i, r in enumerate(rings):
         # if ring is not present in a bigger one than add counter-fragment to the output
